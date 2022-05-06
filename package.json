@@ -1,0 +1,15 @@
+{
+  "name": "attendance_monitor",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.1",
+    "nodemon": "^2.0.16",
+    "puppeteer": "^13.7.0",
+    "puppeteer-screen-recorder": "^2.0.2"
+  }
+}
