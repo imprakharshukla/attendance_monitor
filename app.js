@@ -7,10 +7,12 @@ const app = express()
 app.get('/attendance', async (req, res) => {
 
     const ad_number = req.query.adno
+    const pswd = req.query.pswd || "GCET123"
     if (!ad_number) {
         res.status(400).send({error: "Admission number is not found!"})
+    }
 
-    } else {
+    else {
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
 
@@ -23,20 +25,20 @@ app.get('/attendance', async (req, res) => {
 
         await page.waitForSelector("#actlpass")
         await page.focus('#actlpass')
-        await page.keyboard.type('GCET123')
+        await page.keyboard.type(pswd)
 
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(100);
 
         await (await page.$('#psslogin')).press('Enter'); // Enter Key
 
-        await page.waitForTimeout(2000);
+        await page.waitForTimeout(200);
 
         if (page.url().includes("errormessage=Invalid+Username+or+Password.Please+try+again."))
             res.status(400).send("Invalid Login Credentials")
         else {
             await page.goto('https://gu.icloudems.com/corecampus/student/attendance/subwise_attendace_new.php')
             //
-            await page.waitForTimeout(2000);
+            await page.waitForTimeout(1000);
 
             //await page.click("#select2-acadyear-container")
             //await (await page.$('.select2-selection__rendered')).press('Enter'); // Enter Key
@@ -49,7 +51,7 @@ app.get('/attendance', async (req, res) => {
             await (await page.$('#getattendance')).press('Enter'); // Enter Key
 
 
-            await page.waitForTimeout(2000)
+            await page.waitForTimeout(500)
 
 
             const result = await page.$$eval('.table tr', rows => {
@@ -107,7 +109,8 @@ app.get('/attendance', async (req, res) => {
             let metadata = {name, dp}
             final.push({metadata})
 
-            res.status(200).send({response: final})
+            res.send(final)
+            await browser.close();
         }
         await browser.close()
     }
