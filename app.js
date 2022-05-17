@@ -46,7 +46,14 @@ app.get('/attendance', async (req, res) => {
 
             await page.select('#acadyear', '2021-2022')
             await page.waitForTimeout(2000)
-            await page.select('#classid', '2816')
+
+            const values = await page.evaluate(() => {
+               const select = document.querySelector('#classid');
+               return Array.from(select.options).map(o => o.value);
+            });
+            await page.waitForTimeout(1000);
+            await page.select("#classid", await values[values.length-1]);
+            
             await page.waitForTimeout(1000)
             await (await page.$('#getattendance')).press('Enter'); // Enter Key
 
