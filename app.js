@@ -1,15 +1,19 @@
 const puppeteer = require('puppeteer');
 const express = require('express')
-//const {PuppeteerScreenRecorder} = require('puppeteer-screen-recorder');
 const port = process.env.PORT || 9696
 const app = express()
 
+
 app.get('/attendance', async (req, res) => {
 
-    const ad_number = req.query.adno
+    const ad_number = req.query.admission_number
+    const password = req.query.password
     if (!ad_number) {
         res.status(400).send({error: "Admission number is not found!"})
 
+    }
+    if (!password) {
+        res.status(400).send({error: "Password is not found!"})
     } else {
         const browser = await puppeteer.launch({
             args: [
@@ -27,7 +31,7 @@ app.get('/attendance', async (req, res) => {
 
         await page.waitForSelector("#actlpass")
         await page.focus('#actlpass')
-        await page.keyboard.type('GCET123')
+        await page.keyboard.type(password)
 
         await page.waitForTimeout(1000);
 
